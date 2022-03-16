@@ -1,46 +1,177 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stock</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'stock/css/index.css' %}">
-    
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'stock/css/index.css' %}"
+    />
+  </head>
+  <body>
     <h2 class="top">Stock Market Data</h2>
-    <a class="button button3 right" href="{% url 'create_data' %}">Create Data</a>
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <a class="button button3 right" href="{% url 'create_data' %}"
+      >Create Data</a
+    >
     <table>
-        <thead>
-            <th>Date</th>
-            <th>Trade Code</th>
-            <th>High</th>
-            <th>Low</th>
-            <th>Open</th>
-            <th>Close</th>
-            <th>Volume</th>
-            <th>Actions</th>
-            
-        </thead>
-        <tbody>
-            {% for value in data %}
-            <tr>
-                <td>{{ value.date }}</td>
-                <td>{{ value.trade_code }}</td>
-                <td>{{ value.high }}</td>
-                <td>{{ value.low }}</td>
-                <td>{{ value.open }}</td>
-                <td>{{ value.close }}</td>
-                <td>{{ value.volume }}</td>
-                <td class="actions">
-                    <a class="button button1" href="{% url 'edit_data' value.id %}">Edit</a>
-                    <a class="button button2" href="{% url 'delete_data' value.id %}">Delete</a>
-                </td>
-            </tr>
+      <thead>
+        <th>Date</th>
+        <th>Trade Code</th>
+        <th>High</th>
+        <th>Low</th>
+        <th>Open</th>
+        <th>Close</th>
+        <th>Volume</th>
+        <th>Actions</th>
+      </thead>
+      <tbody>
+        {% for value in data %}
+        <tr>
+          <td class="date-column">{{ value.date }}</td>
+          <td>{{ value.trade_code }}</td>
+          <td>{{ value.high }}</td>
+          <td>{{ value.low }}</td>
+          <td>{{ value.open }}</td>
+          <td class="close">{{ value.close }}</td>
+          <td class="volume">{{ value.volume }}</td>
+          <td class="actions">
+            <a class="button button1" href="{% url 'edit_data' value.id %}"
+              >Edit</a
+            >
+            <a class="button button2" href="{% url 'delete_data' value.id %}"
+              >Delete</a
+            >
+          </td>
+        </tr>
         {% endfor %}
-        </tbody>
+      </tbody>
     </table>
-</body>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"
+      integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById("myChart").getContext("2d");
+
+        //   const el = {{ data_json | safe }};
+
+        //   console.log(el)
+
+        const classesNodeList = document.getElementsByClassName("close");
+        const close_values = Array.prototype.map.call(
+          classesNodeList,
+          function (element) {
+            return element.innerHTML;
+          }
+        );
+        // const close_values = el.map(e => e.close)
+        // const dates = el.map(e => e.date)
+
+        const classesNodeList2 = document.getElementsByClassName("date-column");
+        const dates = Array.prototype.map.call(
+          classesNodeList2,
+          function (element) {
+            return element.innerHTML;
+          }
+        );
+
+        const classesNodeList3 = document.getElementsByClassName("volume");
+        const volumes = Array.prototype.map.call(
+          classesNodeList2,
+          function (element) {
+            return element.innerHTML;
+          }
+        );
+
+
+        const arrOfObjects = [];
+
+        // console.log(dates);
+
+        for (let i = 0; i < close_values.length; i++) {
+          arrOfObjects.push({
+            date: dates[i],
+            close: close_values[i],
+          });
+        }
+
+        arrOfObjects.sort((a, b) => a - b);
+
+        const data = arrOfObjects.map((e) => e.close);
+        const labels = arrOfObjects.map((e) => e.date);
+
+        // console.log(Math.min(...data));
+
+        const myChart = new Chart(ctx, {
+         
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                type: "line",
+                label: "Close",
+                data: data,
+                backgroundColor: [
+                  "rgba(255, 99, 132, 0.2)",
+                  "rgba(54, 162, 235, 0.2)",
+                  "rgba(255, 206, 86, 0.2)",
+                  "rgba(75, 192, 192, 0.2)",
+                  "rgba(153, 102, 255, 0.2)",
+                  "rgba(255, 159, 64, 0.2)",
+                ],
+                borderColor: [
+                  "rgba(255, 99, 132, 1)",
+                  "rgba(54, 162, 235, 1)",
+                  "rgba(255, 206, 86, 1)",
+                  "rgba(75, 192, 192, 1)",
+                  "rgba(153, 102, 255, 1)",
+                  "rgba(255, 159, 64, 1)",
+                ],
+                borderWidth: 1,
+              },
+              {
+                type: "bar",
+                label: "Volumes",
+                data: volumes,
+                backgroundColor: [
+                  "rgba(255, 99, 132, 0.2)",
+                  "rgba(54, 162, 235, 0.2)",
+                  "rgba(255, 206, 86, 0.2)",
+                  "rgba(75, 192, 192, 0.2)",
+                  "rgba(153, 102, 255, 0.2)",
+                  "rgba(255, 159, 64, 0.2)",
+                ],
+                borderColor: [
+                  "rgba(255, 99, 132, 1)",
+                  "rgba(54, 162, 235, 1)",
+                  "rgba(255, 206, 86, 1)",
+                  "rgba(75, 192, 192, 1)",
+                  "rgba(153, 102, 255, 1)",
+                  "rgba(255, 159, 64, 1)",
+                ],
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      });
+    </script>
+  </body>
 </html>

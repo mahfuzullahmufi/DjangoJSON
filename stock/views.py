@@ -1,9 +1,11 @@
 import json
 from multiprocessing import context
 from pathlib import Path
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect
 import json, os
 import stock
+from django.core import serializers
 
 from stock.models import Stock
 from .forms import EditForm
@@ -12,7 +14,9 @@ from .forms import EditForm
 def index(request):
     data = Stock.objects.all()
 
-    return render(request, "stock/index.html", {"data": data})
+    data_json = serializers.serialize('json', data)
+
+    return render(request, "stock/index.html", {"data": data, "data_json": data_json})
 
 def createData(request):
     form = EditForm()
