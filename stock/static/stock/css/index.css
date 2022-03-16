@@ -1,3 +1,9 @@
+.top {
+  display: flex;
+  justify-content: center;
+  
+}
+
 
 table, th, td{
     border: 1px solid #ddd;
@@ -42,4 +48,10 @@ table {
   }
   
   .button1 {background-color: #130f29;} 
-  .button2 {background-color: #fa0404;} 
+  .button2 {background-color: #fa0404;}
+  .button3 {background-color: #04AA6D;}
+
+  .right {
+    float: right;
+    font-family: sans-serif;
+  }

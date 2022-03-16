@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Data</title>
+    
+    <link rel="stylesheet" href="{% static 'stock/css/delete.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Are you sure want to delete this Data?</h2>
+        <form method="post">
+
+            {% csrf_token %}
+            <a class="button button2" href="{% url 'index' %}">Cancel</a>
+            
+            <input type="submit" name="Confirm">
+        </form>
+    </div>
+    
+    
+</body>
+</html>
